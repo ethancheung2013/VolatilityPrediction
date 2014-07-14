@@ -1,0 +1,3 @@
+1. Specify SELENIUM_SERVER_JAR in environment 
+ 2. Maybe java -jar selenium-server-*.jar
+  3. driver.get
