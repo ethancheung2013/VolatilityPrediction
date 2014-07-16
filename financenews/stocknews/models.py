@@ -6,3 +6,13 @@ class NewsContent(models.Model):
     title              = models.CharField(max_length=4000)
     content            = models.CharField(max_length=50000)
     date               = models.DateField()
+
+class yahooCalendar(models.Model):
+    datetime            = models.DateField()
+    statistic           = models.CharField(max_length=100)
+    for_period          = models.CharField(max_length=50)
+    actual              = models.FloatField()
+    briefing_forecast   = models.FloatField()
+    market_expects      = models.FloatField()
+    prior               = models.FloatField()
+    revised_from        = models.FloatField()

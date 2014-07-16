@@ -5,7 +5,7 @@ import numpy as np
 import psycopg2
 from dateutil import parser
 import ipdb
-
+from datetime import datetime as dt
 
 def getHref(webelements):
 #        for i, element in enumerate(webelements):
@@ -38,7 +38,7 @@ def connect_to_db():
     pf = open('password.txt')
     passwd = pf.readline()
     PASSWRD = passwd
-    ipdb.set_trace()
+    #ipdb.set_trace()
     return psycopg2.connect(database= DBNAME, user=DBUSER, password=PASSWRD) #, host = '/tmp')       
 
 def getContent(setOfURL):
@@ -47,19 +47,15 @@ def getContent(setOfURL):
     conn = connect_to_db()                                          
     cur = conn.cursor()
     with conn:
-        allURLs = "SELECT url from stocknews_newscontent" # where title ='" + title + "'"
-        print allURLs                                                                                                                           
-        cur.execute(allURLs)
-        existingURL = set(cur.fetchall())
+        allURLs = "SELECT url from stocknews_newscontent" 
 
+        cur.execute(allURLs)
+        existingURL = set(eItem[0] for eItem in cur.fetchall())
+        
     newURL = setOfURL.difference(existingURL)
 
-    for j in np.arange(1):
-        oneURL = str(newURL.pop())
+    for oneURL in newURL:
         browser.get(oneURL)
-    #    for eNewURL in oneURL:
-    #        browser.get(eNewURL)
-
         strTitle = ''
         datePub = ''
         articleHeader = browser.find_elements_by_xpath('//*[@id="content"]/div/div[1]/div[2]/div/div[3]/article')
@@ -70,17 +66,13 @@ def getContent(setOfURL):
             for dHeader in articleHeader[0].find_elements_by_tag_name('time'):
                 datePub = dHeader.get_attribute('datetime')
         # retrieve the content via p tags    
-        print '********************************** ********************************************'
-        print strTitle
-        print '**********************************  %s   **************************************' % datePub
-
         mainStory = browser.find_elements_by_xpath('//*[@id="content"]/div/div[1]/div[2]/div/div[3]/article/div/div[3]')
+
         if len(mainStory) == 1:            
             content = ''
             for eContent in mainStory[0].find_elements_by_tag_name('p'):
-                print eContent.text
                 content += ''.join(eContent.text)
-#        ipdb.set_trace()
+
         storeContent(strTitle, datePub, content, oneURL)
     return True
 
@@ -107,15 +99,18 @@ def storeContent(strTitle, datePub, content, iurl):
     conn = connect_to_db() 
     cur = conn.cursor()
 
-#    dateObj = parser.parse(datePub)
-    dateObj = str(parser.parse(datePub.strip() , tzinfos={'EST', -18000}))
 
-#    cur.execute('''INSERT into stocknews_newscontent (url, title, content, date) values (%s, %s, %s, %s);'''% ( iurl , '"'+ strTitle + '"', content, '"' + dateObj + '"')) 
-#    ipdb.set_trace()
+    dateObj = str(parser.parse(datePub.strip() , tzinfos={'EST', -18000}))
+    if dateObj == '' or dateObj is None:
+        dateObj = dt.now()
+
     strTitle = strTitle.replace("'","")
     sql = "INSERT into stocknews_newscontent (url, title, content, date) values ('"+ iurl + "','" + strTitle + "','" + strContent + "','" + datePub + "');"
-
-    cur.execute(sql)
+    try: 
+        cur.execute(sql)
+    except:
+        datePub = dt.now()
+        cur.execute(sql)
 
     conn.commit()
     return "The item : %s was successfully saved to the databse" % strTitle
@@ -136,34 +131,31 @@ def main():
 
     browser.get(url)
     numClicks = 1
-    advanceClicks = 2
+    advanceClicks = 400
     while numClicks < advanceClicks:
 	if numClicks == 1:
             #url = 'http://www.foxnews.com/us/economy/index.html#'
             for eClick in np.arange(advanceClicks):
                 # find the Show More button and click it a bunch of times
                 browser.find_element_by_class_name("btn-smll").click()
-                time.sleep(0.5)
+                time.sleep(1)
                 numClicks += 1
 
     # all news headlines are li but on under ul
-    tempList = []
+    setURL = set()
     for i, element in enumerate(browser.find_elements_by_xpath('//*[@id="section-content"]/div[1]/div[4]/div/div/div[6]/div/div/div/ul/li')):
         try:
             h3Element = element.find_element_by_tag_name('h3')
-            tempList.append(h3Element.find_element_by_tag_name('a').get_attribute('href'))
-        except NoSuchElementException:
+#            ipdb.set_trace()
+            setURL.add(h3Element.find_element_by_tag_name('a').get_attribute('href'))
+        except: # NoSuchElementException:
             pass
-
-    setURL = set(tempList)
 
     #strTitle, datePub, strContent, strUrl  = getContent(setURL)
 
     getContent(setURL)
 
-#    storeContent(strTitle, datePub, strContent, strUrl)
-
-browser = webdriver.Chrome()    
+browser = webdriver.Safari()   #Chrome()    
 if __name__ == '__main__':
     main()
 
