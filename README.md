@@ -8,3 +8,4 @@ initialclaims.py is NOT complete.  It is intended to scrape the DOL website and 
 
 alter.sql is used to drop the "NOT NULL" constraint on the postgres schema generated using Django
 
+sentimentmodel.py is the linear regression model that will try to predict stock volatility using text
