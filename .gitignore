@@ -6,4 +6,6 @@ chromedriver_mac32*
 selenium-project*
 HistoricalVolatility*
 *initial_claims*
-
+selenium-server-standalone-2.42.2.jar
+nltk-trainer
+dump*

@@ -63,7 +63,7 @@ def saveViaSQLalchemy(df):
         Precondition: Old dataframe of column types strings
         Postcondition: First three columns are strings, remainder are floats
     '''
-    engine = create_engine('postgresql://ethancheung@localhost:5432/test')
+    engine = create_engine('postgresql://ethancheung@localhost:5432/newscontent')
     engine.connect()
     table_name = 'stocknews_yahoocalendar'
     df.to_sql(table_name, engine)

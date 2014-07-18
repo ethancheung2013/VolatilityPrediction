@@ -10,25 +10,48 @@ import psycopg2
 import pandas.io.sql as psql
 import ipdb
 import sys
+from sklearn.cluster import KMeans
+
+def getConn(DBNAME, DBUSER, PASSWRD, tablename):
+    '''
+        DESCRIPTION:
+            Generic database connection
+
+        PARAMETERS:
+            Database name, user, password, tablename
+            Returns: dataframe with URL, title, content, date
+    '''
+    conn = psycopg2.connect(database= DBNAME, user=DBUSER, password=PASSWRD)
+    sql = 'SELECT url, title, content, date from ' + tablename
+    df = psql.frame_query(sql, conn)
+    return df
 
 def getScrapedContent():
+    '''
+        DESCRIPTION:
+            Gets data from multiple datasources having URL, title, content, date and returns a merged dataframe
 
-    DBNAME = 'newscontent'
+        PARAMETERS:
+            Returns a merged dataframe that hasn't been cleaned
+    '''
+
+    DBNAME = zip(['newscontent', 'financenews'],['stocknews_newscontent', 'data'])
     DBUSER = 'ethancheung'
     PASSWRD = open('password.txt').readline()
 
-    conn = psycopg2.connect(database= DBNAME, user=DBUSER, password=PASSWRD)
-    sql = 'SELECT * from stocknews_newscontent'
-    df = psql.frame_query(sql, conn)
-
-    return df
+    rDf = pd.DataFrame()
+    for eDB in DBNAME:
+        rDf = rDf.append(getConn(eDB[0], DBUSER, PASSWRD, eDB[1]))
+    print 'size of returned Df', rDf.shape
+    return rDf
 
 def combineHistVolColumn(contentDf, volDf):
     '''          
-       NAME:
-          combineHistVolColumn
-
        DESCRIPTION:
+          Scraped content dataframe from postgres
+          Volatility dataframe from google
+
+       RETURNS:
           Merges the scraped web content with the historical volatility labels
           Precondition: Scraped content dataframe, volatility dataframe
           Returns: Content dataframe, label dataframe
@@ -52,10 +75,10 @@ def combineHistVolColumn(contentDf, volDf):
  
 def getHistoricalVolatility():
     '''
-        NAME:  getHistoricalVolatility
-
         DESCRIPTION:
-            Computes the daily historical volatility
+            Computes the daily historical volatility since 2012-11-15 to end of 2014
+
+        PARAMETERS:
             Returns: Dataframe of S&P using 1 day lag
     '''
     sp = web.DataReader('^GSPC', data_source='yahoo', start = '2012-11-15', end = '2014-12-31')
@@ -65,25 +88,36 @@ def getHistoricalVolatility():
     return sp
 
 if __name__ == '__main__':
+    #a = main(sys.argv[1:])
+    #ipdb.set_trace()
+    lr = False
+    kmeans = True
+
     # get, merge, and clean dataframe
     sp_df      = getHistoricalVolatility()
     content_df = getScrapedContent()
     X, y       = combineHistVolColumn(content_df, sp_df)
-
+ 
     # vectorize text
     clf  = TfidfVectorizer(stop_words='english')
     clfv = clf.fit_transform(X)
 
     # cross validation
-    X_train, X_test, y_train, y_test = train_test_split(clfv, y, test_size=0.2, random_state=42)
-
-    # use naive bayes
-    clf = LinearRegression()
-    clf.fit(X_train, y_train)
+    X_train, X_test, y_train, y_test = train_test_split(clfv, y, test_size=0.1, random_state=42)
     
-    y_pred = clf.predict(X_test)
+    if lr:
+        clf = LinearRegression()
+        clf.fit(X_train, y_train)
+    
+        y_pred = clf.predict(X_test)
 
-    ipdb.set_trace()
+    elif kmeans:
+
+        clf = KMeans(n_clusters=10, init='k-means++', max_iter=100, n_init=1)
+        clf.fit_predict(X_train)
+        labels = clf.labels_
+
+
     # 1 estimator score method
     print "Estimator score method: ", clf.score(X_test, y_test)
     # 2 scoring parameter
