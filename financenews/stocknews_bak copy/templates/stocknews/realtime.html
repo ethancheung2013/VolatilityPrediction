@@ -1,0 +1,39 @@
+{% extends 'dh5bp/base.html' %}
+{% load staticfiles %} /* for the use of the static variable - see below */
+{% load url from future %}
+{% block title %}
+
+        <title>Parallelism by HTML5 UP</title>
+        <meta name="viewport" content="width=1120,user-scalable=no" />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <meta name="description" content="" />
+        <meta name="keywords" content="" />
+        <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400" rel="stylesheet" type="text/css" />
+        <!--[if lte IE 8]><script src="js/html5shiv.js"></script>-->
+
+
+        <script src=" {% static "stocknews/js/jquery.min.js" %} "></script>
+        <script src=" {% static "stocknews/js/jquery.poptrox.min.js" %} "></script>
+        <script src=" {% static "stocknews/js/config.js" %} "></script>
+        <script src=" {% static "stocknews/js/skel.min.js" %} "></script>
+
+        <noscript>
+            <link rel="stylesheet" href=" {% static "stocknews/css/skel-noscript.css" %} " />
+            <link rel="stylesheet" href=" {% static "stocknews/css/style.css" %} " />
+            <link rel="stylesheet" href=" {% static "stocknews/css/style-desktop.css" %} " />
+            <link rel="stylesheet" href=" {% static "stocknews/css/style-noscript.css" %} " />
+        </noscript>
+
+{% endblock %}
+
+<div id="header" class="item" data-width="400">
+    <h1>Parallelism</h1>
+    <p>A responsive portfolio site<br />
+    template by HTML5 UP</p>
+</div>
+
+{% block content %}
+
+
+
+{% endblock %}

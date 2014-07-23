@@ -9,3 +9,4 @@ HistoricalVolatility*
 selenium-server-standalone-2.42.2.jar
 nltk-trainer
 dump*
+test_sent.py

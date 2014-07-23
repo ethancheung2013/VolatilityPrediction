@@ -1,0 +1,105 @@
+
+
+{% extends "stocknews/base.html" %}
+{% load static %}
+
+
+{% block content %}
+{% block title %}{{ section.title }}{% endblock %}
+
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>Hello, crappy world!</h1>
+    <table>
+    {% for doc in news %}
+    <tr style="color:{% cycle 'blue' 'green' %}"> 
+    	<td> {{ doc.title }} {{ doc.category }} {{ doc.sentiment }} </td> 
+    </tr>
+    {% endfor %}
+	</table>
+    <p><a class="btn btn-primary btn-lg" role="button">Learn more &raquo;</a></p>
+  </div>
+</div>
+
+<!-- <table>
+    {% for doc in news %}
+    <tr style="color:{% cycle 'blue' 'green' %}"> 
+    	<td> {{ doc.title }} </td> 
+    </tr>
+    {% endfor %}
+</table> -->
+<div id="main">
+	<div id="reel">
+	<!-- ******************************************************************************************** -->
+	<!-- ******************************************************************************************** -->
+	
+
+		<!-- Header Item -->
+		
+<!--			<div id="header" class="item" data-width="400">
+				<h1>Parallelism</h1>
+				<p>A responsive portfolio site<br />
+				template by HTML5 UP</p>
+			</div>
+		
+
+			<article class="item thumb" data-width="282">
+				<h2>You really got me</h2>
+				<a href="{% static "stocknews/img/fulls/01.jpg" %} "><img src="{% static "stocknews/img/thumbs/01.jpg" %} " alt=""></a>
+			</article>
+			
+			<article class="item thumb" data-width="384">
+				<h2>Ad Infinitum</h2>
+				<a href="{% static "stocknews/img/fulls/02.jpg" %} "><img src="{% static "stocknews/img/thumbs/02.jpg" %} " alt=""></a>
+			</article>
+			
+			<article class="item thumb" data-width="274">
+				<h2>Different.</h2>
+				<a href="{% static "stocknews/img/fulls/03.jpg" %} "><img src="{% static "stocknews/img/thumbs/03.jpg" %} " alt=""></a>
+			</article>
+			
+			<article class="item thumb" data-width="282">
+				<h2>Elysium</h2>
+				<a href="{% static "stocknews/img/fulls/04.jpg" %} "><img src="{% static "stocknews/img/thumbs/04.jpg" %} " alt=""></a>
+			</article>
+			
+			<article class="item thumb" data-width="476">
+				<h2>Kingdom of the Wind</h2>
+				<a href="{% static "stocknews/img/fulls/05.jpg" %} "><img src="{% static "stocknews/img/thumbs/05.jpg" %} " alt=""></a>
+			</article>
+			
+			<article class="item thumb" data-width="232">
+				<h2>The Pursuit</h2>
+				<a href="{% static "stocknews/img/fulls/06.jpg" %} "><img src="{% static "stocknews/img/thumbs/06.jpg" %} " alt=""></a>
+			</article>
+			
+			<article class="item thumb" data-width="352">
+				<h2>Boundless</h2>
+				<a href="{% static "stocknews/img/fulls/07.jpg" %} "><img src="{% static "stocknews/img/thumbs/07.jpg" %} " alt=""></a>
+			</article>
+			
+			<article class="item thumb" data-width="348">
+				<h2>The Spectators</h2>
+				<a href="{% static "stocknews/img/fulls/08.jpg" %} "><img src="{% static "stocknews/img/thumbs/08.jpg" %} " alt=""></a>
+			</article>
+-->
+<!--
+			<article class="item thumb" data-width="476"><h2>Kingdom of the Wind</h2><a href="{% static "stocknews/img/fulls/05.jpg" %} "><img src="{% static "stocknews/img/thumbs/05.jpg" %} " alt=""></a></article>
+			<article class="item thumb" data-width="232"><h2>The Pursuit</h2><a href="{% static "stocknews/img/fulls/06.jpg" %} "><img src="{% static "stocknews/img/thumbs/06.jpg" %} " alt=""></a></article>
+			<article class="item thumb" data-width="352"><h2>Boundless</h2><a href="{% static "stocknews/img/fulls/07.jpg" %} "><img src="{% static "stocknews/img/thumbs/07.jpg" %} " alt=""></a></article>
+			<article class="item thumb" data-width="348"><h2>The Spectators</h2><a href="{% static "stocknews/img/fulls/08.jpg" %} "><img src="{% static "stocknews/img/thumbs/08.jpg" %} " alt=""></a></article>
+			<article class="item thumb" data-width="282"><h2>You really got me</h2><a href="{% static "stocknews/img/fulls/01.jpg" %} "><img src="{% static "stocknews/img/thumbs/01.jpg" %} " alt=""></a></article>
+			<article class="item thumb" data-width="384"><h2>Ad Infinitum</h2><a href="{% static "stocknews/img/fulls/02.jpg" %} "><img src="{% static "stocknews/img/thumbs/02.jpg" %} " alt=""></a></article>
+			<article class="item thumb" data-width="274"><h2>Different.</h2><a href="{% static "stocknews/img/fulls/03.jpg" %} "><img src="{% static "stocknews/img/thumbs/03.jpg" %} " alt=""></a></article>
+			<article class="item thumb" data-width="282"><h2>Elysium</h2><a href="{% static "stocknews/img/fulls/04.jpg" %} "><img src="{% static "stocknews/img/thumbs/04.jpg" %} " alt=""></a></article>
+-->
+
+	<!-- ******************************************************************************************** -->
+	<!-- ******************************************************************************************** -->
+	</div>
+</div>
+
+{% endblock %}
+
+

@@ -24,6 +24,10 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
+TEMPLATE_DIR = (
+    '/Users/ethancheung/Documents/zipfianacademy/FoxScraper/financenews/stocknews/templates'
+)
+
 ALLOWED_HOSTS = []
 
 
@@ -36,7 +40,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'stocknews'
+    'stocknews',
+    # 'debug_toolbar',
+    # 'dh5bp',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -83,3 +89,4 @@ POSTGIS_VERSION = (2, 1, 1)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static_collected')
