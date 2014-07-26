@@ -5,6 +5,8 @@ import requests
 import pandas as pd
 import re
 from sqlalchemy import create_engine
+import psycopg2
+import ipdb
 
 def cleanText(text):
     '''                                                                                                                                                              
@@ -32,6 +34,31 @@ def cleanText(text):
         cleaned = "-" + cleaned
 
     return cleaned
+def getConn(DBNAME, DBUSER, PASSWRD, tablename, bLabel=False):
+    '''
+        DESCRIPTION:
+            Generic database connection
+
+        PARAMETERS:
+            Database name, user, password, tablename
+            Returns: dataframe with URL, title, content, date
+    '''
+   
+    conn = psycopg2.connect(database=DBNAME, user=DBUSER, password=PASSWRD)
+    sql = 'SELECT max(date) from stocknews_yahoocalendar order by date desc'
+
+    df = psql.frame_query(sql, conn)
+    conn.close()
+    return conn
+
+def queryDBForLatest():
+    '''
+    DESCRIPTION:
+          Query the database for the last known economic report to see if anything should be added to table
+    RETURNS:
+          Max date 
+    '''
+
 
 def createCalendarLinks():
     '''                                                                                                                                                              
@@ -65,7 +92,7 @@ def saveViaSQLalchemy(df):
     '''
     engine = create_engine('postgresql://ethancheung@localhost:5432/newscontent')
     engine.connect()
-    table_name = 'stocknews_yahoocalendar'
+    table_name = 'stocknews_yahoocalendar_t'
     df.to_sql(table_name, engine)
     return True
 
@@ -83,6 +110,7 @@ def fixColumnTypes(df):
     df[tofloat] = df[tofloat].astype(float)
             
     return df
+
 
 def retrieveEconData():
     ''''
@@ -113,7 +141,7 @@ def retrieveEconData():
             for sIdx in np.arange(4,9):
                 listDF.append(cleanText(cols[sIdx].string))
             yahoo_data.append(listDF)
-
+    ipdb.set_trace()
     df = pd.DataFrame(yahoo_data, columns=['Date','Time_ET','Statistic','ForActual','Briefing_Forecast','Market_Expects','Prior','Revised_From'])
     df = df.fillna(0)
     df = df.where(df != '',0)

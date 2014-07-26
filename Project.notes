@@ -1,0 +1,55 @@
+Project
+
+
+Discovering the impact of financial news on market volatility.
+
+
+Fetch news documents
+Vectorize with tf-idf
+Cluster with NMF
+Assign cluster to document by max cluster score
+Name clusters by inspection
+
+Fetch volatility data
+For each document, compute volatility delta
+	def volatility_delta(doc_datetime, time_period):
+		return volatility(price_data(doc_datetime - time_period)) - volatility(price_data(doc_datetime + time_period))
+
+	def volatility(price_data):
+		return np.std(price_data)
+
+
+
+
+Document 		| Named Category	|  DateTime 			|  Volatility delta (For time)
+--------------------------------------------------------------------------------
+'US Auto...'	|  Auto				|  02-03-12 00:00:00 	|  33
+'Fed Rates'		|  Government		|  01-22-14	00:00:00 	|  -2
+
+
+
+FEATURES
+Document fetching
+Document feature extraction
+	Categorization (NMF - keep all topics)
+	Sentiment
+	Source
+
+LABELS
+Price fetching
+Volatility delta calculation
+
+
+MODELS
+Classifier predicting increase/decrease in volatility
+	Logistic
+	Random Forest
+Regression predicting volatility delta
+	Linear Regression
+	Random Forest
+	Retrain on various time_deltas to see decay rate of news impact
+Statistical significance of volatility delta
+
+
+
+
