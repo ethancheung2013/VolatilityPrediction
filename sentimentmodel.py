@@ -113,7 +113,6 @@ def combineHistVolColumn(contentDf, volDf):
     contentDf['Date_obj'] = pd.to_datetime(contentDf['date'])
 
     # ENHANCEMENT: calculate the volatility for each document per given time period
-
     volDf['Date_obj'] = pd.to_datetime(volDf['index'])
 
     merged = pd.merge(contentDf, volDf, on='Date_obj', how='outer')
@@ -149,8 +148,6 @@ def getHistoricalVolatility(time_period):
     else:
         sp = pd.read_csv('hist_vol.csv', parse_dates=True, index_col='Date')
 
-    # time_period = 30
-
     # calculate the volatility delta over a defined range before and after each date
     vol_delta = pd.DataFrame()
 
@@ -172,9 +169,6 @@ def volatility_delta(doc_date, time_period, df):
             Document date and the period of interest to calculate the volatility differences
             Data dataframe containing historical volatility
     '''
-    #return volatility(price_data(doc_datetime - time_period)) - volatility(price_data(doc_datetime + time_period))
-    # before time frame
-
     before = df.ix[price_data(doc_date, time_period, df, True)]['IntraDay_Vol']
     before.fillna(0, inplace=True)
     after = df.ix[price_data(doc_date, time_period, df, False)]['IntraDay_Vol']
@@ -373,7 +367,7 @@ def displayROC(X_test, y_test, clf, showAUC, i, volThres):
 
     fpr, tpr,thresholds = roc_curve(y_test, probas_[:,1]) 
     roc_auc = auc(fpr, tpr)
-    print("Area under the ROC curve : %f" % roc_auc)
+    print("Area under the ROC curve : %f " % roc_auc, i)
 
     if showAUC:
         plt.figure()
@@ -421,10 +415,9 @@ def add_Binary_Features(orig_Content, featureDf):
     '''
     sentDf = pd.DataFrame(calculateSentiment(orig_Content['content']))
     # binarize the sentiment and add one column
+
     dummies1 = pd.get_dummies(sentDf[0])
-    featureDf['Sentiment'] = dummies1.iloc[:,:-1]
-
-
+    featureDf['Sentiment'] = dummies1.iloc[:,:-1]       #[:,1:2]   second column is pos
     orig_Content['url'] = orig_Content['url'].apply(lambda x: x.split('.')[1])
     dummies2 = pd.get_dummies(orig_Content['url'])
     featureDf = pd.concat([featureDf, dummies2.iloc[:,:-1]], join='outer', axis=1)
@@ -467,21 +460,6 @@ def get_feature_matrix(df):
         n_clf, logclf_loaded, tfclf_loaded, nb_classifer = cPickle.load(fid)
 
 
-def heatmap(timedelta, threshold):
-    '''
-        Description:
-            Plots threshold against time delta to determine the best timeframe and threshold based on auc
-        Parameters:
-            Receives time delta period array and volatility threshold
-    '''
-
-    heatmap, xedges, yedges = np.histogram2d(timedelta, threshold, bins=50)
-    extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
-
-    plt.clf()
-    plt.imshow(heatmap, extent=extent)
-    plt.show()
-
 def show_confusion_mat(y_test, y_pred, i, volThres):
 
     cm = confusion_matrix(y_test, y_pred)
@@ -508,149 +486,142 @@ def nmf_logistic():
     df2_content               = article_df2[['content','date', 'url']]
     df2_date                  = article_df2['date']
 
-    time_period = 30
+    time_period = 250
     showAUC = False
 
     aRocScore = []
     r2 = []
-    for iPer in xrange(time_period):
 
-        rocauc = []
-        toIterate = np.linspace(0.0, 4.0, num=5)
-        # toIterate = [1]
-        for volThres in toIterate:   #xrange(3):
+    with open('my_csv.csv', 'a') as f:
 
-            sp_df = getHistoricalVolatility(iPer)
-            X, y_vol = combineHistVolColumn(df2_content, sp_df)
+        for iPer in xrange(time_period):
 
-            # when using nmf, X_test is used bc I want to discover latent topics
-            n_topics = 10
-            n_top_words = 15
-            n_clf = NMF(n_components=n_topics, random_state=1)
+            rocauc = []
+            toIterate = np.linspace(0.0, 4.0, num=5)
+            # toIterate = [1]
+            for volThres in toIterate:   
 
-            tfidf, clfv = generate_tfidf(X['content'])
-            W = n_clf.fit_transform(clfv)
-            H = n_clf.components_
+                sp_df = getHistoricalVolatility(iPer)
+                X, y_vol = combineHistVolColumn(df2_content, sp_df)
 
-            W_corr = pd.DataFrame(W)
-            W_corr['Date'] = df2_date.values
-            W_corr['Volatility'] = y_vol.values
+                # when using nmf, X_test is used bc I want to discover latent topics
+                n_topics = 10
+                n_top_words = 15
+                n_clf = NMF(n_components=n_topics, random_state=1)
 
-            # add binarize features
-            data = add_Binary_Features(X, W_corr)
-            # this label is continuous and won't work for logistic/random forest
-            label = data.pop('Volatility')
+                tfidf, clfv = generate_tfidf(X['content'])
+                W = n_clf.fit_transform(clfv)
+                H = n_clf.components_
 
-            ######################### VISUALIZATION #####################
-            # feature_names = tfidf.get_feature_names()
-            # for topic_idx, topic in enumerate(n_clf.components_):
-            #     print("Topic #%d:" % topic_idx)
-            #     print(" ".join( [feature_names[i] for i in topic.argsort()[:-n_top_words - 1:-1]] ))
-            #     print
+                W_corr = pd.DataFrame(W)
+                W_corr['Date'] = df2_date.values
+                W_corr['Volatility'] = y_vol.values
 
-            #generalization of topics to categories FYI
-            # topics = {4: "World news", 0: "Corporate", 2: "Housing", 9: "Consumer spending", 8: "Corporate Earnings", \
-            #           7: "Energy", 6: "Employment", 5: "Government", 1: "Auto", 3: "General"}
+                # add binarize features
+                data = add_Binary_Features(X, W_corr)
+                # this label is continuous and won't work for logistic/random forest
+                label = data.pop('Volatility')
 
-            # importance_forest(data, label)
+                ######################### VISUALIZATION #####################
+                # feature_names = tfidf.get_feature_names()
+                # for topic_idx, topic in enumerate(n_clf.components_):
+                #     print("Topic #%d:" % topic_idx)
+                #     print(" ".join( [feature_names[i] for i in topic.argsort()[:-n_top_words - 1:-1]] ))
+                #     print
 
-            # plt.bar(df2_date, label.values, width=0.7, edgecolor='none', color=(label>0).map({True: '#006600', False: 'r'}), 
-            #     label="Vol Delta over Time",
-            #     )
-            # plt.legend(loc='best')
-            # plt.ylabel(u'Volatility Delta')
-            # plt.xlabel(u'Time')
-            # plt.title('Volatility Delta over Time')
-            # plt.grid()
-            # plt.show()
+                #generalization of topics to categories FYI
+                # topics = {4: "World news", 0: "Corporate", 2: "Housing", 9: "Consumer spending", 8: "Corporate Earnings", \
+                #           7: "Energy", 6: "Employment", 5: "Government", 1: "Auto", 3: "General"}
 
-            # ipdb.set_trace()
-            # plt.scatter(x=str(df2_date), y=label, marker='o') #, label='Avg Volatility', c=label.values, alpha=0.6)
-            # # (label.values > 0).map({True: 'r', False: 'b'})
-            # plt.show()
+                # importance_forest(data, label)
 
-            ################################        CLASSIFICATION
-                                            ########  LOGISTIC #########
-            t0 = time()
-            lr_clf  = LogisticRegression(C=1, penalty='l1', tol=0.01)
+                # plt.bar(df2_date, label.values, width=0.7, edgecolor='none', color=(label>0).map({True: '#006600', False: 'r'}), 
+                #     label="Vol Delta over Time",
+                #     )
+                # plt.legend(loc='best')
+                # plt.ylabel(u'Volatility Delta')
+                # plt.xlabel(u'Time')
+                # plt.title('Volatility Delta over Time')
+                # plt.grid()
+                # plt.show()
 
-            W_corr['HasVolatility'] = W_corr['Volatility'].apply(lambda x: 1 if x > volThres or x < -volThres else 0)
+                # ipdb.set_trace()
+                # plt.scatter(x=str(df2_date), y=label, marker='o') #, label='Avg Volatility', c=label.values, alpha=0.6)
+                # # (label.values > 0).map({True: 'r', False: 'b'})
+                # plt.show()
 
-            label_ = W_corr.pop('HasVolatility')
+                ################################        CLASSIFICATION
+                                                ########  LOGISTIC #########
+                t0 = time()
+                lr_clf  = LogisticRegression(C=1, penalty='l1', tol=0.01)
 
-            X_train, X_test, y_train, y_test = train_test_split(data, label_, test_size=0.4, random_state=42)  
+                W_corr['HasVolatility'] = W_corr['Volatility'].apply(lambda x: 1 if x > volThres or x < -volThres else 0)
 
-            # scores = cross_val_score(lr_clf, X_train, y_train, cv=1)
-            # print "%s -- %s" % (lr_clf.__class__, np.mean(scores))
-            # print("done in %fs" % (time() - t0))
+                label_ = W_corr.pop('HasVolatility')
 
-            lr_clf.fit(X_train, y_train)
+                X_train, X_test, y_train, y_test = train_test_split(data, label_, test_size=0.4, random_state=42)  
 
-            aucscore = displayROC(X_test, y_test, lr_clf, showAUC, iPer, volThres)
-            y_pred = lr_clf.predict(X_test)
-            if showAUC:
-                precision, recall = show_confusion_mat(y_test, y_pred, iPer, volThres)
-                rocauc.append((precision, recall))                
+                # scores = cross_val_score(lr_clf, X_train, y_train, cv=1)
+                # print "%s -- %s" % (lr_clf.__class__, np.mean(scores))
+                # print("done in %fs" % (time() - t0))
 
-            # append to an array to show AUC over different time periods and thresholds
-            r2.append([iPer, volThres, aucscore])
+                lr_clf.fit(X_train, y_train)
 
-                                            ########  RANDOM FOREST #########
+                aucscore = displayROC(X_test, y_test, lr_clf, showAUC, iPer, volThres)
+                y_pred = lr_clf.predict(X_test)
+                if showAUC:
+                    precision, recall = show_confusion_mat(y_test, y_pred, iPer, volThres)
+                    rocauc.append((precision, recall))                
 
-            # rf_clf = RandomForestClassifier(verbose=10, n_estimators=1, n_jobs=-1, max_features=None)
+                # append to an array to show AUC over different time periods and thresholds
+                # r2.append([iPer, volThres, aucscore])
+                tmpdf = pd.DataFrame([[iPer, volThres, aucscore]])
+                tmpdf.to_csv(f, header=False)
 
-            # # scores = cross_val_score(rf_clf, X_train, y_train, cv=1)
-            # # print "%s -- %s" % (rf_clf.__class__, np.mean(scores))
-            # # print("done in %fs" % (time() - t0))
+                                                ########  RANDOM FOREST #########
 
-            # rf_clf.fit(X_train, y_train)
-            # aucscore = displayROC(X_test, y_test, rf_clf, showAUC, iPer, volThres)
-            # y_pred = rf_clf.predict(X_test)
-            # if showAUC:
-            #     precision, recall = show_confusion_mat(y_test, y_pred, iPer, volThres)
+                # rf_clf = RandomForestClassifier(verbose=10, n_estimators=1, n_jobs=-1, max_features=None)
+
+                # # scores = cross_val_score(rf_clf, X_train, y_train, cv=1)
+                # # print "%s -- %s" % (rf_clf.__class__, np.mean(scores))
+                # # print("done in %fs" % (time() - t0))
+
+                # rf_clf.fit(X_train, y_train)
+                # aucscore = displayROC(X_test, y_test, rf_clf, showAUC, iPer, volThres)
+                # y_pred = rf_clf.predict(X_test)
+                # if showAUC:
+                #     precision, recall = show_confusion_mat(y_test, y_pred, iPer, volThres)
 
 
 
-            ################################           PREDICTION
-                                            ########  LINEAR REG #########
+                ################################           PREDICTION
+                                                ########  LINEAR REG #########
 
-            # print "------------------- performing LINEAR REG"
-            # X_train, X_test, y_train, y_test = train_test_split(data, label, test_size=0.4, random_state=42)  
-            # lnr_clf = LinearRegression()
-            # lnr_clf.fit(X_train, y_train)
+                # print "------------------- performing LINEAR REG"
+                # X_train, X_test, y_train, y_test = train_test_split(data, label, test_size=0.4, random_state=42)  
+                # lin_clf = LinearRegression()
+                # lin_clf.fit(X_train, y_train)
 
-            # y_pred = lnr_clf.predict(X_test)
-            # displayScore(lnr_clf, X_train, y_train, X_test, y_test, y_pred)
+                # y_pred = lin_clf.predict(X_test)
+                # displayScore(lin_clf, X_train, y_train, X_test, y_test, y_pred)
 
-            # print ("Residual sum of squares: %.2f" %
-            #         np.mean((lnr_clf.predict(X_test) - y_test) ** 2))
-            # # Explained variance score: 1 is perfect prediction
-            # print ('Variance score: %.2f' % lnr_clf.score(X_test, y_test))
+                # print ("Residual sum of squares: %.2f" %
+                #         np.mean((lin_clf.predict(X_test) - y_test) ** 2))
+                # # Explained variance score: 1 is perfect prediction
+                # print ('Variance score: %.2f' % lin_clf.score(X_test, y_test))
 
-            # pickle the clssifiers
+                # pickle the clssifiers
+                # nb_classifer = train_sentiment_classifier()
 
-            # with open ('lr_lin_n_clf.pkl', 'wb') as fid:
-            #     cPickle.dump((n_clf, clf_lr_nmf_vol, tfidf, nb_classifer), fid)
+                # with open ('lr_lin_n_clf.pkl', 'wb') as fid:
+                #     cPickle.dump((n_clf, lin_clf, lr_clf, rf_clf, tfidf, nb_classifer), fid)
 
-        # array of auc scores for LR
-        # aRocScore.append(r2)
 
-    ipdb.set_trace()
-    for eR2 in r2:
-        plt.figure()
-        plt.plot(eR2, label='ROC curve (area = %0.2f)' %eR2[0])
-        # plt.plot([0, 1], [0, 1], 'k--')
-        plt.xlim([0.0, 1.0])
-        plt.ylim([0.0, 1.05])
-        plt.xlabel('Threshold')
-        plt.ylabel('AUC')
-        plt.title('Predictive Value of News on Volatility')
-        plt.legend(loc="lower right")
-        plt.show()
+        r2Df = pd.DataFrame(r2)
+        r2Df.to_csv('r2Df.csv')
+ 
 
-    # splat = zip(r2, rocauc)
-    # for a, b in splat:
-    #     print 'score :',a , 'precision/recall' ,b
+
     print 
     # sBeta = calculate_CrossCorrelation(W_corr, n_topics)
 
@@ -659,29 +630,8 @@ def nmf_logistic():
     # print 'cross_corr_Topics :',cross_corr_Topics
 
 
+    #plt.hexbin(df['Day'], df['Threshold'], C=df['AUC'], bins=None, gridsize=5)
 
-
-
-
-#uncommnet later
-
-    # X_train, X_test, y_train, y_test = train_test_split(clfv, labels, test_size=0.4, random_state=42)        
-
-    # clf_lr_nmf_vol = LogisticRegression()
-    # clf_lr_nmf_vol.fit(X_train, y_train)
-
-    # y_pred = clf_lr_nmf_vol.predict(X_test)
-
-    # # ipdb.set_trace()
-    # # #create and train nb classifier for the pickle
-    # # nb_classifer = train_sentiment_classifier()
-
-    # with open ('km_lrnmf_tfi_model.pkl', 'wb') as fid:
-    #     cPickle.dump((n_clf, clf_lr_nmf_vol, tfidf, nb_classifer), fid)
-    # ipdb.set_trace()
-    # displayScore(clf_lr_nmf_vol, X_train, y_train, X_test, y_test, y_pred)
-    
-    #displayROC(X_test, y_test, clf_lr_nmf_vol)
 
     print    
 

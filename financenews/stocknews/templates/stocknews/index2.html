@@ -1,0 +1,380 @@
+{% load static %}
+<!doctype html>
+<!--[if lte IE 8]>     <html class="lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class=""> <!--<![endif]-->                                   <!-- ENDLESS SCROLL BAR -->
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width" />
+  <meta name="description" content="Cascading grid layout library" />
+
+  <title>Volio.org</title>
+
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Montserrat:400,700" />
+  
+    <!-- DEV MODE - including each .css file -->    
+      <link rel="stylesheet" href="{% static "stocknews/bower_components/normalize-css/normalize.css" %}" />  
+      <link rel="stylesheet" href="{% static "stocknews/css/base.css" %}" />    
+      <link rel="stylesheet" href="{% static "stocknews/css/custom.css" %}" />
+      <link rel="stylesheet" href="{% static "stocknews/css/code.css" %}" />    
+      <link rel="stylesheet" href="{% static "stocknews/css/demos.css" %}" />    
+      <link rel="stylesheet" href="{% static "stocknews/css/footer.css" %}" />    
+      <link rel="stylesheet" href="{% static "stocknews/css/hero.css" %}" />    
+      <link rel="stylesheet" href="{% static "stocknews/css/icons.css" %}" />    
+      <link rel="stylesheet" href="{% static "stocknews/css/index.css" %}" />    
+      <link rel="stylesheet" href="{% static "stocknews/css/layout.css" %}" />    
+      <link rel="stylesheet" href="{% static "stocknews/css/modules.css" %}" />    
+      <link rel="stylesheet" href="{% static "stocknews/css/site-nav.css" %}" />    
+      <link rel="stylesheet" href="{% static "stocknews/css/custom.css" %}" />
+  
+<!--   <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@desandro" />
+  <meta name="twitter:url" content="http://masonry.desandro.com/index.html" />
+  <meta name="twitter:title" content="Masonry" />
+  <meta name="twitter:description" content="Cascading grid layout library" /> -->
+  <style>
+    a.adjust{
+      padding:10px;
+      display:block;
+      font-weight:bold;
+      background:#eee;
+      color:#333;
+      border-radius:12px;
+      -webkit-border-radius:12px;
+      -moz-border-radius:12px;
+      width:80px;
+      text-align:center;
+      text-decoration:none;
+    }
+    a.adjust:hover{
+      background:#333;
+      color:#FFF;
+      -webkit-transition: all 400ms; /*safari and chrome */
+      -moz-transition: all 400ms ease; /* firefox */
+      -o-transition: all 400ms ease; /* opera */
+      transition: all 400ms ease;
+    }
+    p.continued{
+      margin-top:0;
+    }
+/*    .button-group{
+      position: absolute;
+      height: 300px;
+      padding-left: 400px;
+      }*/
+
+    p.vol {
+      font-size: 12px; 
+      color: red;
+    }
+
+    .bar {
+      fill: steelblue;
+    }
+
+    .bar:hover {
+      fill: brown;
+    }
+
+    .axis {
+      font: 10px sans-serif;
+    }
+
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+
+    .x.axis path {
+      display: none;
+    }
+
+
+
+}
+  </style>
+  
+
+</head>
+<body class="index-page" data-page="index">
+
+    <!-- <iframe src="http://localhost:8000/home" width="200" height="200"></iframe> -->
+
+  <div id="site-nav">
+    <div class="primary-content">
+      <h1><a href=".">Volio</a></h1>
+<!--       <ol>
+        <li class="nav-options"><a href="options.html">Options</a></li>
+        <li class="nav-methods"><a href="methods.html">Methods</a></li>
+        <li class="nav-events"><a href="events.html">Events</a></li>
+        <li class="nav-appendix"><a href="appendix.html">Appendix</a></li>
+        <li class="nav-faq"><a href="faq.html">FAQ</a></li>
+      </ol> -->
+    </div>
+  <div class="hero-item has-title texty">
+          <p class="tagline"><img border="0" width="175" height="75" class="tagline" src="{% static "stocknews/images/volio_pic.jpg" %}"></p>
+
+
+          
+
+  </div>
+
+  <div id="filters" class="button-group" style="position: absolute;
+        height: 300px;
+        padding-left: 400px;">     <!-- BETTER BUTTONS" -->
+    <button id = "All" data-filter="*">All</button>
+    <button data-filter=".Housing">Housing</button>   <!-- FILTERING DOESNT WORK   -->
+    <button data-filter=".Corporate">Corporate</button>
+    <button data-filter=".World news">World</button>
+    <button data-filter=".ConsumerSpending">Consumer spending</button>
+    <button data-filter=".Corporate Earnings">Corporate Earnings</button>
+    <button data-filter=".Energy">Energy</button>
+    <button data-filter=".Employment">Employment</button>
+    <button data-filter=".Government">Government</button>
+    <button data-filter=".Auto">Auto</button>
+    <button data-filter=".General">General</button>
+  </div>
+
+  </div>
+  
+    <div id="hero">
+  <div class="primary-content">
+
+    <div class="hero-masonry" id="container">
+      <div class="grid-sizer"></div>
+<!--         topics_dict = {4: "World news", 0: "Corporate", 2: "Housing", 9: "Consumer spending", 8: "Corporate Earnings", \
+                          7: "Energy", 6: "Employment", 5: "Government", 1: "Auto", 3: "General"} -->
+
+          {% for doc in news %}
+
+              {% if doc.category == 'Housing' %}
+                <div class="hero-item item w2 what-is texty text-content more-less short-text {{ doc.category }}" style="background-color: hsl( 108, 100%, 50%);">
+                    <!-- <img src="{% static "stocknews/images/thumbs/08.jpg" %}" alt=""> -->
+                    <div class="more-block">
+<!--                       <svg id= {{doc.title}} > </svg> -->
+                        <p class="vol"> {{doc.volatility_lr}} / 10 </p>
+                        <h3> {{ doc.title }} {{ doc.sentiment }} * {{ doc.category }}* {{doc.has_volatility}} * {{doc.volatility_lr}} * {{doc.volatility_rf}} </h3> 
+                        <p> {{ doc.content }}  </p>
+                    </div>
+
+                  </div>                
+
+              {% elif doc.category == 'CorporateEarnings' %}
+                  <div class="hero-item item w2 what-is texty text-content more-less short-text {{ doc.category }}" style="background-color: blue;">
+                    <!-- <img src="{% static "stocknews/images/thumbs/08.jpg" %}" alt=""> -->
+                    <div class="more-block">
+                      <h3> {{ doc.title }} {{ doc.sentiment }} * {{ doc.category }}* {{doc.has_volatility}} * {{doc.volatility_lr}} * {{doc.volatility_rf}} </h3> 
+                      <p> {{ doc.content }}  </p>
+                    </div>
+                  </div>                
+              {% elif doc.category == 'WorldNews' %}
+                  <div class="hero-item item w2 what-is texty text-content more-less short-text {{ doc.category }}" style="background-color: aliceblue;">
+                    <!-- <img src="{% static "stocknews/images/thumbs/08.jpg" %}" alt=""> -->
+                    <div class="more-block">
+                      <h3> {{ doc.title }} {{ doc.sentiment }} * {{ doc.category }}* {{doc.has_volatility}} * {{doc.volatility_lr}} * {{doc.volatility_rf}} </h3> 
+                      <p> {{ doc.content }}  </p>
+                    </div>
+                  </div>    
+              {% elif doc.category == 'Government' %}
+                  <div class="hero-item item w2 what-is texty text-content more-less short-text {{ doc.category }}" style="background-color: yellow;">
+                    <!-- <img src="{% static "stocknews/images/thumbs/08.jpg" %}" alt=""> -->
+                    <div class="more-block">
+                      <h3> {{ doc.title }} {{ doc.sentiment }} * {{ doc.category }}* {{doc.has_volatility}} * {{doc.volatility_lr}} * {{doc.volatility_rf}} </h3> 
+                      <p> {{ doc.content }}  </p>
+                    </div>
+
+                  </div>    
+              {% elif doc.category == 'Corporate' %}
+                  <div class="hero-item item w2 what-is texty text-content more-less short-text {{ doc.category }}" style="background-color: pink;">
+                    <!-- <img src="{% static "stocknews/images/thumbs/08.jpg" %}" alt=""> -->
+                    <div class="more-block">
+                      <h3> {{ doc.title }} {{ doc.sentiment }} * {{ doc.category }}* {{doc.has_volatility}} * {{doc.volatility_lr}} * {{doc.volatility_rf}} </h3> 
+                      <p> {{ doc.content }}  </p>
+                    </div>
+
+                  </div>    
+              {% elif doc.category == 'ConsumerSpending' %}
+                  <div class="hero-item item w2 what-is texty text-content more-less short-text {{ doc.category }}" style="background-color: cadetblue;">
+                    <!-- <img src="{% static "stocknews/images/thumbs/08.jpg" %}" alt=""> -->
+                    <div class="more-block">
+                      <h3> {{ doc.title }} {{ doc.sentiment }} * {{ doc.category }}* {{doc.has_volatility}} * {{doc.volatility_lr}} * {{doc.volatility_rf}} </h3> 
+                      <p> {{ doc.content }}  </p>
+                    </div>
+
+                  </div>                
+              {% endif %}
+          {% endfor %}
+
+    </div> 
+
+  </div> 
+
+</div> 
+
+  </div>
+
+<!-- Masonry does NOT require jQuery.
+     jQuery is only used to demonstrate Masonry as a jQuery plugin -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.0/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="bower_components/jquery/jquery.min.js"><\/script>')</script>
+  <!-- DEV MODE - including each .js file -->
+    <script src="{% static "stocknews/js/isotope.pkgd.js" %}"></script>
+<!--    <script src="{% static "stocknews/bower_components/classie/classie.js" %}"></script> 
+    <script src="{% static "stocknews/bower_components/eventie/eventie.js" %}"></script>
+    <script src="{% static "stocknews/bower_components/doc-ready/doc-ready.js" %}"></script>
+    <script src="{% static "stocknews/bower_components/get-style-property/get-style-property.js" %}"></script>
+    <script src="{% static "stocknews/bower_components/eventEmitter/EventEmitter.js" %}"></script>
+    <script src="{% static "stocknews/bower_components/imagesloaded/imagesloaded.js" %}"></script>
+    <script src="{% static "stocknews/bower_components/jquery-bridget/jquery.bridget.js" %}"></script>
+    <script src="{% static "stocknews/bower_components/get-size/get-size.js" %}"></script>
+    <script src="{% static "stocknews/bower_components/matches-selector/matches-selector.js" %}"></script>
+    <script src="{% static "stocknews/bower_components/outlayer/item.js" %}"></script>
+    <script src="{% static "stocknews/bower_components/outlayer/outlayer.js" %}"></script>
+    <script src="{% static "stocknews/bower_components/masonry/masonry.js" %}"></script>
+  -->
+    <script src="{% static "stocknews/js/controller.js" %}"></script>
+    <script src="{% static "stocknews/js/pages/events.js" %}"></script>
+    <script src="{% static "stocknews/js/pages/faq.js" %}"></script>
+    <script src="{% static "stocknews/js/pages/index.js" %}"></script>
+    <script src="{% static "stocknews/js/pages/methods.js" %}"></script>
+<script>
+// init Isotope
+var $container = $('#container').isotope({
+  // options
+
+  itemSelector: '.text-content',
+  getSortData: {
+    name: '.name',
+    category: '[data-category]'
+  },
+  // layout mode options
+  
+});
+
+
+// filter items on button click
+$('#filters').on( 'click', 'button', function() {
+  var filterValue = $(this).attr('data-filter');
+  $container.isotope({ filter: filterValue });
+});
+
+
+
+$(function(){
+
+  // The height of the content block when it's not expanded
+  var adjustheight = 80;
+  // The "more" link text
+  var moreText = "+  More";
+  // The "less" link text
+  var lessText = "- Less";
+
+  // Sets the .more-block div to the specified height and hides any content that overflows
+  $(".more-less .more-block").css('height', adjustheight).css('overflow', 'hidden'); 
+  $(".more-less").append('<p class="continued">[&hellip;]</p><a href="#" class="adjust"></a>');
+  $("a.adjust").text(moreText);
+
+
+  $(".adjust").on('click', function (e) {
+    var button = (e.target && $(e.target)) || e;
+    var showing = button.text() === lessText;
+
+    if (showing) {
+      // Hide text
+      button.parents("div:first").find(".more-block").css('height', adjustheight).css('overflow', 'hidden');
+      button.parents("div:first").find("p.continued").css('display', 'block');
+      // Switch button to more
+      button.text(moreText);
+      document.getElementById("All").click
+    } else {
+      // Show extra text
+      button.parents("div:first").find(".more-block").css('height', 'auto').css('overflow', 'visible');
+      // Hide the [...] when expanded
+      button.parents("div:first").find("p.continued").css('display', 'none');
+      // Switch button to Less
+
+      button.text(lessText);
+    }
+  });
+});
+
+
+
+
+
+
+
+
+</script>
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var x = d3.scale.ordinal()
+    .rangeRoundBands([0, width], .1);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left")
+    .ticks(10, "%");
+{% for eDoc in news %}
+var svg = d3.select("svg#{{ eDoc.volatility_lr}} ").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.tsv("{% static "stocknews/data/data.tsv" %}", type, function(error, data) {
+  x.domain(data.map(function(d) { return d.letter; }));
+  y.domain([0, d3.max(data, function(d) { return d.frequency; })]);
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("Frequency");
+
+  svg.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.letter); })
+      .attr("width", x.rangeBand())
+      .attr("y", function(d) { return y(d.frequency); })
+      .attr("height", function(d) { return height - y(d.frequency); });
+
+});
+{% endfor %}
+
+function type(d) {
+  d.frequency = +d.frequency;
+  return d;
+}
+
+</script>
+
+
+</body>
+</html>

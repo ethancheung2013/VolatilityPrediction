@@ -1,0 +1,6 @@
+  $(".more-less").append("
+  […]
+
+  ");
+  // Set the "More" text
+  $("a.adjust").text(moreText);
