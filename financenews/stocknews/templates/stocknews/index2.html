@@ -154,7 +154,7 @@
               {% if doc.category == 'Housing' %}
                 <div class="hero-item item w2 what-is texty text-content more-less short-text {{ doc.category }}" style="background-color: hsl( 108, 100%, 50%);">
                     <!-- <img src="{% static "stocknews/images/thumbs/08.jpg" %}" alt=""> -->
-                    <div class="more-block">
+                    <div data-link = {{ forloop.counter0 }} class="more-block">
                         <h3> {{ doc.title }} {{ doc.sentiment }} * {{ doc.category }}* {{doc.has_volatility}} * {{doc.volatility_lr}} * {{doc.volatility_rf}} </h3> 
                         <p> {{ doc.content }}  </p>
                     </div>
@@ -164,13 +164,13 @@
               {% elif doc.category == 'CorporateEarnings' %}
                   <div class="hero-item item w2 what-is texty text-content more-less short-text {{ doc.category }}" style="background-color: blue;">
                     <!-- <img src="{% static "stocknews/images/thumbs/08.jpg" %}" alt=""> -->
-                    <div class="more-block">
+                    <div data-link = {{ forloop.counter0 }} class="more-block">
                       <h3> {{ doc.title }} {{ doc.sentiment }} * {{ doc.category }}* {{doc.has_volatility}} * {{doc.volatility_lr}} * {{doc.volatility_rf}} </h3> 
                       <p> {{ doc.content }}  </p>
                     </div>
                   </div>                
               {% elif doc.category == 'WorldNews' %}
-                  <div class="hero-item item w2 what-is texty text-content more-less short-text {{ doc.category }}" style="background-color: aliceblue;">
+                  <div data-link = {{ forloop.counter0 }} class="hero-item item w2 what-is texty text-content more-less short-text {{ doc.category }}" style="background-color: aliceblue;">
                     <!-- <img src="{% static "stocknews/images/thumbs/08.jpg" %}" alt=""> -->
                     <div class="more-block">
                       <h3> {{ doc.title }} {{ doc.sentiment }} * {{ doc.category }}* {{doc.has_volatility}} * {{doc.volatility_lr}} * {{doc.volatility_rf}} </h3> 
@@ -178,7 +178,7 @@
                     </div>
                   </div>    
               {% elif doc.category == 'Government' %}
-                  <div class="hero-item item w2 what-is texty text-content more-less short-text {{ doc.category }}" style="background-color: yellow;">
+                  <div data-link = {{ forloop.counter0 }} class="hero-item item w2 what-is texty text-content more-less short-text {{ doc.category }}" style="background-color: yellow;">
                     <!-- <img src="{% static "stocknews/images/thumbs/08.jpg" %}" alt=""> -->
                     <div class="more-block">
                       <!-- <svg id= "{{doc.volatility_lr}}" > </svg> -->
@@ -189,7 +189,7 @@
 
                   </div>    
               {% elif doc.category == 'Corporate' %}
-                  <div class="hero-item item w2 what-is texty text-content more-less short-text {{ doc.category }}" style="background-color: pink;">
+                  <div data-link = {{ forloop.counter0 }} class="hero-item item w2 what-is texty text-content more-less short-text {{ doc.category }}" style="background-color: pink;">
                     <!-- <img src="{% static "stocknews/images/thumbs/08.jpg" %}" alt=""> -->
                     <div class="more-block">
                       <h3> {{ doc.title }} {{ doc.sentiment }} * {{ doc.category }}* {{doc.has_volatility}} * {{doc.volatility_lr}} * {{doc.volatility_rf}} </h3> 
@@ -198,7 +198,7 @@
 
                   </div>    
               {% elif doc.category == 'ConsumerSpending' %}
-                  <div id = {{ forloop.counter0 }}  class="hero-item item w2 what-is texty text-content more-less short-text {{ doc.category }}" style="background-color: cadetblue;">
+                  <div data-link = {{ forloop.counter0 }}  class="hero-item item w2 what-is texty text-content more-less short-text {{ doc.category }}" style="background-color: cadetblue;">
                     <!-- <img src="{% static "stocknews/images/thumbs/08.jpg" %}" alt=""> -->
                     <div class="more-block">
                       <!-- <svg id="{{doc.volatility_lr}}"> </svg> -->
@@ -295,9 +295,9 @@ $(function(){
       button.text(moreText);
       //document.getElementById("All").click
     } else {
-                  // document.getElementById('#All').click();
+
                   $('#All').click();
-      alert(showing);
+      // alert(showing);
 
       // Show extra text
       button.parents("div:first").find(".more-block").css('height', 'auto').css('overflow', 'visible');
@@ -349,9 +349,12 @@ $(function(){
  
 </style>
 <body>
+  <div id='60'></div>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script>
- 
+
+
+
 var margin = {top: 30, right: 10, bottom: 10, left: 10},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
@@ -399,15 +402,41 @@ d3.tsv("{% static "stocknews/data/data2.tsv" %}", type, function(error, data) {
       .attr("y2", height);
  
 });
- 
+
+$('rect').hover(
+  function() {
+    var id = $(this).id;
+    $('div#' + id ).addClass( "highlight" );
+  }, function() {
+    $( this ).removeClass( "highlight" );
+  }
+);
+
 function type(d) {
   d.Volatility = +d.Volatility;
   return d;
 }
 
-// $(".text-content").mouseover(function(){
-//   $("div").css("background-color","yellow");
-// });
+$( window ).load(function() { 
+  // when D3 rects are hovered, it will highlight the document
+  var hoveron = function () {
+     var iid = $(this).attr('id');
+     var original_el = $("div[data-link=" + iid + "]");
+
+     original_el.data('original-color', original_el.css('background-color'))
+     original_el.css('background-color', "red");
+  }
+
+  var hoveroff = function () {
+     var iid = $(this).attr('id');
+     var color = $("div[data-link=" + iid + "]").data("original-color");
+     $("div[data-link=" + iid + "]").css('background-color', color);
+  }
+
+  $('rect').hover(hoveron, hoveroff);
+});
+
+
 
 </script>
 
