@@ -615,7 +615,11 @@ def nmf_logistic():
 
                 with open ('lr_lin_n_clf.pkl', 'wb') as fid:
                     cPickle.dump((n_clf, lin_clf, lr_clf, rf_clf, tfidf, nb_classifer), fid)
+                fid.close()
 
+                with open ('lr_lin_n_clf.pkl', 'rb') as fid:
+                    n_clf, lin_clf, lr_clf, rf_clf, tfidf, nb_classifer = cPickle.load(fid)
+                fid.close()
 
         # r2Df = pd.DataFrame(r2)
         # r2Df.to_csv('r2Df.csv')
