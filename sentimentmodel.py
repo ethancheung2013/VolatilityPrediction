@@ -486,7 +486,7 @@ def nmf_logistic():
     df2_content               = article_df2[['content','date', 'url']]
     df2_date                  = article_df2['date']
 
-    time_period = 250
+    time_period = [7]
     showAUC = False
 
     aRocScore = []
@@ -494,11 +494,11 @@ def nmf_logistic():
 
     with open('my_csv.csv', 'a') as f:
 
-        for iPer in xrange(time_period):
+        for iPer in time_period:   #xrange(time_period):
 
             rocauc = []
             toIterate = np.linspace(0.0, 4.0, num=5)
-            # toIterate = [1]
+            toIterate = [1]
             for volThres in toIterate:   
 
                 sp_df = getHistoricalVolatility(iPer)
@@ -580,45 +580,45 @@ def nmf_logistic():
 
                                                 ########  RANDOM FOREST #########
 
-                # rf_clf = RandomForestClassifier(verbose=10, n_estimators=1, n_jobs=-1, max_features=None)
+                rf_clf = RandomForestClassifier(verbose=10, n_estimators=1, n_jobs=-1, max_features=None)
 
-                # # scores = cross_val_score(rf_clf, X_train, y_train, cv=1)
-                # # print "%s -- %s" % (rf_clf.__class__, np.mean(scores))
-                # # print("done in %fs" % (time() - t0))
+                # scores = cross_val_score(rf_clf, X_train, y_train, cv=1)
+                # print "%s -- %s" % (rf_clf.__class__, np.mean(scores))
+                # print("done in %fs" % (time() - t0))
 
-                # rf_clf.fit(X_train, y_train)
-                # aucscore = displayROC(X_test, y_test, rf_clf, showAUC, iPer, volThres)
-                # y_pred = rf_clf.predict(X_test)
-                # if showAUC:
-                #     precision, recall = show_confusion_mat(y_test, y_pred, iPer, volThres)
+                rf_clf.fit(X_train, y_train)
+                aucscore = displayROC(X_test, y_test, rf_clf, showAUC, iPer, volThres)
+                y_pred = rf_clf.predict(X_test)
+                if showAUC:
+                    precision, recall = show_confusion_mat(y_test, y_pred, iPer, volThres)
 
 
 
                 ################################           PREDICTION
                                                 ########  LINEAR REG #########
 
-                # print "------------------- performing LINEAR REG"
-                # X_train, X_test, y_train, y_test = train_test_split(data, label, test_size=0.4, random_state=42)  
-                # lin_clf = LinearRegression()
-                # lin_clf.fit(X_train, y_train)
+                print "------------------- performing LINEAR REG"
+                X_train, X_test, y_train, y_test = train_test_split(data, label, test_size=0.4, random_state=42)  
+                lin_clf = LinearRegression()
+                lin_clf.fit(X_train, y_train)
 
-                # y_pred = lin_clf.predict(X_test)
-                # displayScore(lin_clf, X_train, y_train, X_test, y_test, y_pred)
+                y_pred = lin_clf.predict(X_test)
+                displayScore(lin_clf, X_train, y_train, X_test, y_test, y_pred)
 
-                # print ("Residual sum of squares: %.2f" %
-                #         np.mean((lin_clf.predict(X_test) - y_test) ** 2))
-                # # Explained variance score: 1 is perfect prediction
-                # print ('Variance score: %.2f' % lin_clf.score(X_test, y_test))
+                print ("Residual sum of squares: %.2f" %
+                        np.mean((lin_clf.predict(X_test) - y_test) ** 2))
+                # Explained variance score: 1 is perfect prediction
+                print ('Variance score: %.2f' % lin_clf.score(X_test, y_test))
 
                 # pickle the clssifiers
-                # nb_classifer = train_sentiment_classifier()
+                nb_classifer = train_sentiment_classifier()
 
-                # with open ('lr_lin_n_clf.pkl', 'wb') as fid:
-                #     cPickle.dump((n_clf, lin_clf, lr_clf, rf_clf, tfidf, nb_classifer), fid)
+                with open ('lr_lin_n_clf.pkl', 'wb') as fid:
+                    cPickle.dump((n_clf, lin_clf, lr_clf, rf_clf, tfidf, nb_classifer), fid)
 
 
-        r2Df = pd.DataFrame(r2)
-        r2Df.to_csv('r2Df.csv')
+        # r2Df = pd.DataFrame(r2)
+        # r2Df.to_csv('r2Df.csv')
  
 
 

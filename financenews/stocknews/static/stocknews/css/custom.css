@@ -10,3 +10,10 @@ h3{
 	background-color: hsl( 108, 100%, 50%);
 }*/
 
+
+#graph{
+	margin: 0 auto;
+position: relative;
+/* left: 302px; */
+text-align: center;
+}

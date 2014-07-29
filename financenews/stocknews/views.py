@@ -61,41 +61,47 @@ def index(request):
     n_top_words = 20
 
     tokenizer = RegexpTokenizer(r'\w+')
-    top_10 = NewsContent.objects.all()[:50]
+    top_10 = NewsContent.objects.all()[:10]
 
     sent_arry = []
-    for idx, eDoc in enumerate(top_10):
-        # classify the sentiment
-        title = eDoc.title
-        newdict = {}
-        for i in tokenizer.tokenize(title):
-            newdict[i] = True
-        print 'finished tokenizing'
-        sentiment = nb_classifer.classify(newdict)
-        content =  ''.join([i if ord(i) < 128 else ' ' for i in eDoc.content])
 
-        clfv = tfidf.transform([content])
+    with open('/Users/ethancheung/Documents/zipfianacademy/FoxScraper/financenews/stocknews/static/stocknews/data/data2.tsv', 'w') as f:
+        f.write('document\tVolatility' + '\n')
+        for idx, eDoc in enumerate(top_10):
+            # classify the sentiment
+            title = eDoc.title
+            newdict = {}
+            for i in tokenizer.tokenize(title):
+                newdict[i] = True
+            print 'finished tokenizing'
+            sentiment = nb_classifer.classify(newdict)
+            content =  ''.join([i if ord(i) < 128 else ' ' for i in eDoc.content])
 
-        # determine the topic
-        W = n_clf.transform(clfv)
-        W_corr = pd.DataFrame(W)
-        pred_category = calc_topic(W_corr, W)
+            clfv = tfidf.transform([content])
 
-        url = eDoc.url
-        date1 = eDoc.date
-        W_corr['Date'] = pd.to_datetime(date1).dayofweek
-        sentiment_dict = {'pos': 0, 'neg': 1}
-        W_corr['Sentiment'] = sentiment_dict.get(sentiment)
+            # determine the topic
+            W = n_clf.transform(clfv)
+            W_corr = pd.DataFrame(W)
+            pred_category = calc_topic(W_corr, W)
 
-        W_corr = cleanurl(url, W_corr)
+            url = eDoc.url
+            date1 = eDoc.date
+            W_corr['Date'] = pd.to_datetime(date1).dayofweek
+            sentiment_dict = {'pos': 0, 'neg': 1}
+            W_corr['Sentiment'] = sentiment_dict.get(sentiment)
 
-        y_pred = lr_clf.predict(W_corr)
-        vol_pred1 = lin_clf.predict(W_corr)
-        vol_pred2 = rf_clf.predict(W_corr)
+            W_corr = cleanurl(url, W_corr)
+
+            y_pred = lr_clf.predict(W_corr)
+            vol_pred1 = lin_clf.predict(W_corr)
+            vol_pred2 = rf_clf.predict(W_corr)
 
 
-        sent_arry.append({"title": title, "content": content, "url": url, "category": pred_category, "sentiment": sentiment, "has_volatility": y_pred, "volatility_lr": vol_pred1, "volatility_rf": vol_pred2})
+            f.write(title[:10]+ '\t' + str(format(vol_pred1[0], '.5f')+ '\n'))
+        
 
+            sent_arry.append({"title": title, "content": content, "url": url, "category": pred_category, "sentiment": sentiment, "has_volatility": y_pred, "volatility_lr": vol_pred1[0], "volatility_rf": vol_pred2})
+    f.close()
     return render_to_response("stocknews/index2.html", { "news" : sent_arry })
 
 

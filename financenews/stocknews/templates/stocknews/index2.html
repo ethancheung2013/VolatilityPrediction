@@ -138,23 +138,23 @@
   </div>
 
   </div>
+      <div id="graph"></div>
   
     <div id="hero">
   <div class="primary-content">
 
     <div class="hero-masonry" id="container">
       <div class="grid-sizer"></div>
+
 <!--         topics_dict = {4: "World news", 0: "Corporate", 2: "Housing", 9: "Consumer spending", 8: "Corporate Earnings", \
                           7: "Energy", 6: "Employment", 5: "Government", 1: "Auto", 3: "General"} -->
 
-          {% for doc in news %}
+          {% for doc in news %}  
 
               {% if doc.category == 'Housing' %}
                 <div class="hero-item item w2 what-is texty text-content more-less short-text {{ doc.category }}" style="background-color: hsl( 108, 100%, 50%);">
                     <!-- <img src="{% static "stocknews/images/thumbs/08.jpg" %}" alt=""> -->
                     <div class="more-block">
-<!--                       <svg id= {{doc.title}} > </svg> -->
-                        <p class="vol"> {{doc.volatility_lr}} / 10 </p>
                         <h3> {{ doc.title }} {{ doc.sentiment }} * {{ doc.category }}* {{doc.has_volatility}} * {{doc.volatility_lr}} * {{doc.volatility_rf}} </h3> 
                         <p> {{ doc.content }}  </p>
                     </div>
@@ -181,6 +181,8 @@
                   <div class="hero-item item w2 what-is texty text-content more-less short-text {{ doc.category }}" style="background-color: yellow;">
                     <!-- <img src="{% static "stocknews/images/thumbs/08.jpg" %}" alt=""> -->
                     <div class="more-block">
+                      <!-- <svg id= "{{doc.volatility_lr}}" > </svg> -->
+                      <p class="vol"> {{doc.volatility_lr}} / 10 </p>                      
                       <h3> {{ doc.title }} {{ doc.sentiment }} * {{ doc.category }}* {{doc.has_volatility}} * {{doc.volatility_lr}} * {{doc.volatility_rf}} </h3> 
                       <p> {{ doc.content }}  </p>
                     </div>
@@ -196,22 +198,26 @@
 
                   </div>    
               {% elif doc.category == 'ConsumerSpending' %}
-                  <div class="hero-item item w2 what-is texty text-content more-less short-text {{ doc.category }}" style="background-color: cadetblue;">
+                  <div id = {{ forloop.counter0 }}  class="hero-item item w2 what-is texty text-content more-less short-text {{ doc.category }}" style="background-color: cadetblue;">
                     <!-- <img src="{% static "stocknews/images/thumbs/08.jpg" %}" alt=""> -->
                     <div class="more-block">
+                      <!-- <svg id="{{doc.volatility_lr}}"> </svg> -->
+                      <p class="vol"> {{doc.volatility_lr}} / 10 </p>                       
                       <h3> {{ doc.title }} {{ doc.sentiment }} * {{ doc.category }}* {{doc.has_volatility}} * {{doc.volatility_lr}} * {{doc.volatility_rf}} </h3> 
                       <p> {{ doc.content }}  </p>
                     </div>
 
                   </div>                
               {% endif %}
+
           {% endfor %}
 
     </div> 
 
   </div> 
 
-</div> 
+</div>
+
 
   </div>
 
@@ -287,8 +293,12 @@ $(function(){
       button.parents("div:first").find("p.continued").css('display', 'block');
       // Switch button to more
       button.text(moreText);
-      document.getElementById("All").click
+      //document.getElementById("All").click
     } else {
+                  // document.getElementById('#All').click();
+                  $('#All').click();
+      alert(showing);
+
       // Show extra text
       button.parents("div:first").find(".more-block").css('height', 'auto').css('overflow', 'visible');
       // Hide the [...] when expanded
@@ -296,6 +306,7 @@ $(function(){
       // Switch button to Less
 
       button.text(lessText);
+
     }
   });
 });
@@ -310,68 +321,93 @@ $(function(){
 </script>
 
 <script src="http://d3js.org/d3.v3.min.js"></script>
-<script>
+<style>
+ 
+.bar.positive {
+  fill: steelblue;
+}
+ 
+.bar.negative {
+  fill: brown;
+}
 
-var margin = {top: 20, right: 20, bottom: 30, left: 40},
+.bar:hover {
+  fill: orangered ;
+
+}
+ 
+.axis text {
+  font: 10px sans-serif;
+}
+ 
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+ 
+</style>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+ 
+var margin = {top: 30, right: 10, bottom: 10, left: 10},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
-
-var x = d3.scale.ordinal()
-    .rangeRoundBands([0, width], .1);
-
-var y = d3.scale.linear()
-    .range([height, 0]);
-
+ 
+var x = d3.scale.linear()
+    .range([0, width])
+ 
+var y = d3.scale.ordinal()
+    .rangeRoundBands([0, height], .2);
+ 
 var xAxis = d3.svg.axis()
     .scale(x)
-    .orient("bottom");
-
-var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left")
-    .ticks(10, "%");
-{% for eDoc in news %}
-var svg = d3.select("svg#{{ eDoc.volatility_lr}} ").append("svg")
+    .orient("top");
+ 
+var svg = d3.select("#graph").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-d3.tsv("{% static "stocknews/data/data.tsv" %}", type, function(error, data) {
-  x.domain(data.map(function(d) { return d.letter; }));
-  y.domain([0, d3.max(data, function(d) { return d.frequency; })]);
-
-  svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
-
-  svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("Frequency");
-
+ 
+d3.tsv("{% static "stocknews/data/data2.tsv" %}", type, function(error, data) {
+  x.domain(d3.extent(data, function(d) { return d.Volatility; })).nice();
+  y.domain(data.map(function(d) { return d.document; }));
+ 
   svg.selectAll(".bar")
       .data(data)
     .enter().append("rect")
-      .attr("class", "bar")
-      .attr("x", function(d) { return x(d.letter); })
-      .attr("width", x.rangeBand())
-      .attr("y", function(d) { return y(d.frequency); })
-      .attr("height", function(d) { return height - y(d.frequency); });
-
+      .attr("class", function(d) { return d.Volatility < 0 ? "bar negative" : "bar positive"; })
+      .text(function(d) { return d.Volatility; })
+      .attr("x", function(d) { return x(Math.min(0, d.Volatility)); })
+      .attr("y", function(d) { return y(d.document); })
+      .attr("width", function(d) { return Math.abs(x(d.Volatility) - x(0)); })
+      .attr("height", y.rangeBand())
+      .attr("id", function(d, i) { return i });
+ 
+  svg.append("g")
+      .attr("class", "x axis")
+      .call(xAxis);
+ 
+  svg.append("g")
+      .attr("class", "y axis")
+    .append("line")
+      .attr("x1", x(0))
+      .attr("x2", x(0))
+      .attr("y2", height);
+ 
 });
-{% endfor %}
-
+ 
 function type(d) {
-  d.frequency = +d.frequency;
+  d.Volatility = +d.Volatility;
   return d;
 }
+
+// $(".text-content").mouseover(function(){
+//   $("div").css("background-color","yellow");
+// });
 
 </script>
 
