@@ -135,6 +135,21 @@
   </div>
 
   </div>
+  <p class="intro"> Volio is a real-time news sentiment aggregated and analyzer that predicts:
+        a news category
+        a sentiment
+        and a sense of whether it may move the markets
+      <ul class="instructions">
+        <li>Use the buttons to filter by category</li>
+        <li>Scroll below to see a list of news</li>
+        <li>Volatility impact is predicted above each article title</li>
+        <li>Use the More/Less button to expand text</li>
+        <li>Hovering over each bar in the volatility graph </li>
+        will highlight the document in red
+      </ul>
+
+  </p>
+
       <div id="graph"></div>
   
     <div id="hero">
@@ -148,17 +163,13 @@
 
           {% for doc in news %}  
 
-
-         
-
-             
-
               {% if doc.category == 'Housing' %}
                 <div class="hero-item item w2 what-is texty text-content more-less short-text {{ doc.category }}" style="background-color: #043d57; color: #fff!important;">
                     <!-- <img src="{% static "stocknews/images/thumbs/08.jpg" %}" alt=""> -->
                     <div data-link = {{ forloop.counter0 }} class="more-block">
-                        <h3 style="color:#fff"> {{ doc.title }} {{ doc.sentiment }} * {{ doc.category }}* {{doc.has_volatility}} * {{doc.volatility_lr}} * {{doc.volatility_rf}} </h3> 
-                         {% ifnotequal doc.sentiment "pos" %}
+                      <p class="vol"> Predicted Volatility: {{doc.volatility_lr}} / 10 </p>                        
+                        <h3 style="color:#fff"> {{ doc.title }} </h3> 
+                         {% ifnotequal doc.sentiment "neg" %}
                             <img src="https://cdn1.iconfinder.com/data/icons/prettyoffice/256/add1-.png" class="iconimg_plus">
                         {% else %}
                             <img src="http://cdn-img.easyicon.net/png/5169/516985.png" class="iconimg_minus">
@@ -174,8 +185,9 @@
                   <div data-link = {{ forloop.counter0 }} class="hero-item item w2 what-is texty text-content more-less short-text {{ doc.category }}" style="background-color: #3e6487;">
                     <!-- <img src="{% static "stocknews/images/thumbs/08.jpg" %}" alt=""> -->
                     <div class="more-block">
-                      <h3> {{ doc.title }} {{ doc.sentiment }} * {{ doc.category }}* {{doc.has_volatility}} * {{doc.volatility_lr}} * {{doc.volatility_rf}} </h3> 
-                         {% ifnotequal doc.sentiment "pos" %}
+                      <p class="vol"> Predicted Volatility: {{doc.volatility_lr}} / 10 </p>                        
+                      <h3> {{ doc.title }} </h3> 
+                         {% ifnotequal doc.sentiment "neg" %}
                             <img src="https://cdn1.iconfinder.com/data/icons/prettyoffice/256/add1-.png" class="iconimg_plus">
                         {% else %}
                             <img src="http://cdn-img.easyicon.net/png/5169/516985.png" class="iconimg_minus">
@@ -187,8 +199,9 @@
                   <div data-link = {{ forloop.counter0 }} class="hero-item item w2 what-is texty text-content more-less short-text {{ doc.category }}" style="background-color: #acd964;">
                     <!-- <img src="{% static "stocknews/images/thumbs/08.jpg" %}" alt=""> -->
                     <div class="more-block">
-                      <h3> {{ doc.title }} {{ doc.sentiment }} * {{ doc.category }}* {{doc.has_volatility}} * {{doc.volatility_lr}} * {{doc.volatility_rf}} </h3> 
-                         {% ifnotequal doc.sentiment "pos" %}
+                      <p class="vol"> Predicted Volatility: {{doc.volatility_lr}} / 10 </p>                        
+                      <h3> {{ doc.title }} </h3> 
+                         {% ifnotequal doc.sentiment "neg" %}
                             <img src="https://cdn1.iconfinder.com/data/icons/prettyoffice/256/add1-.png" class="iconimg_plus">
                         {% else %}
                             <img src="http://cdn-img.easyicon.net/png/5169/516985.png" class="iconimg_minus">
@@ -200,10 +213,9 @@
                   <div data-link = {{ forloop.counter0 }} class="hero-item item w2 what-is texty text-content more-less short-text {{ doc.category }}" style="background-color: #fcc868;">
                     <!-- <img src="{% static "stocknews/images/thumbs/08.jpg" %}" alt=""> -->
                     <div class="more-block">
-                      <!-- <svg id= "{{doc.volatility_lr}}" > </svg> -->
-                      <p class="vol"> {{doc.volatility_lr}} / 10 </p>                      
-                      <h3> {{ doc.title }} {{ doc.sentiment }} * {{ doc.category }}* {{doc.has_volatility}} * {{doc.volatility_lr}} * {{doc.volatility_rf}} </h3> 
-                         {% ifnotequal doc.sentiment "pos" %}
+                      <p class="vol"> Predicted Volatility: {{doc.volatility_lr}} / 10 </p>  
+                      <h3> {{ doc.title }} </h3> 
+                         {% ifnotequal doc.sentiment "neg" %}
                             <img src="https://cdn1.iconfinder.com/data/icons/prettyoffice/256/add1-.png" class="iconimg_plus">
                         {% else %}
                             <img src="http://cdn-img.easyicon.net/png/5169/516985.png" class="iconimg_minus">
@@ -216,8 +228,9 @@
                   <div data-link = {{ forloop.counter0 }} class="hero-item item w2 what-is texty text-content more-less short-text {{ doc.category }}" style="background-color: #fa6220;">
                     <!-- <img src="{% static "stocknews/images/thumbs/08.jpg" %}" alt=""> -->
                     <div class="more-block">
-                      <h3> {{ doc.title }} {{ doc.sentiment }} * {{ doc.category }}* {{doc.has_volatility}} * {{doc.volatility_lr}} * {{doc.volatility_rf}} </h3> 
-                         {% ifnotequal doc.sentiment "pos" %}
+                      <p class="vol"> Predicted Volatility: {{doc.volatility_lr}} / 10 </p>                        
+                      <h3> {{ doc.title }} </h3> 
+                         {% ifnotequal doc.sentiment "neg" %}
                             <img src="https://cdn1.iconfinder.com/data/icons/prettyoffice/256/add1-.png" class="iconimg_plus">
                         {% else %}
                             <img src="http://cdn-img.easyicon.net/png/5169/516985.png" class="iconimg_minus">
@@ -231,9 +244,9 @@
                     <!-- <img src="{% static "stocknews/images/thumbs/08.jpg" %}" alt=""> -->
                     <div class="more-block">
                       <!-- <svg id="{{doc.volatility_lr}}"> </svg> -->
-                      <p class="vol"> {{doc.volatility_lr}} / 10 </p>                       
-                      <h3 style="color:#fff"> {{ doc.title }} {{ doc.sentiment }} * {{ doc.category }}* {{doc.has_volatility}} * {{doc.volatility_lr}} * {{doc.volatility_rf}} </h3> 
-                         {% ifnotequal doc.sentiment "pos" %}
+                      <p class="vol"> Predicted Volatility: {{doc.volatility_lr}} / 10 </p>                       
+                      <h3 style="color:#fff"> {{ doc.title }} </h3> 
+                         {% ifnotequal doc.sentiment "neg" %}
                             <img src="https://cdn1.iconfinder.com/data/icons/prettyoffice/256/add1-.png" class="iconimg_plus">
                         {% else %}
                             <img src="http://cdn-img.easyicon.net/png/5169/516985.png" class="iconimg_minus">

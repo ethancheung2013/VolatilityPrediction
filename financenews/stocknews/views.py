@@ -58,7 +58,7 @@ def index(request):
     n_top_words = 20
 
     tokenizer = RegexpTokenizer(r'\w+')
-    top_10 = NewsContent.objects.all()[:100]
+    top_10 = NewsContent.objects.all()[:50]
 
     sent_arry = []
 

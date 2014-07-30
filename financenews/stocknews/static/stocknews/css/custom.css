@@ -50,11 +50,48 @@ cursor: pointer;
 	max-width: 47px;
 	position: absolute;
 	right: 19px;
-	bottom: 17px;
+	bottom: 50px;
 }
 
 .iconimg_minus{
 	max-width: 100px;
 	position: absolute;
 	right: 11px;
+	bottom: 50px;
+}
+
+.hasTooltip {
+    position:relative;
+}
+.hasTooltip span {
+    display:none;
+}
+
+.hasTooltip:hover span {
+    display:block;
+    background-color:black;
+    border-radius:5px;
+    color:white;
+    box-shadow:1px 1px 3px gray;
+    position:absolute;
+    padding:5px;
+    top:1.3em;
+    left:0px;   
+    max-width:200px;
+}
+
+.intro {
+	position: absolute;
+	margin-top: 200px;
+	margin-left: 75px;
+	margin-right: 1450px;
+	font-size: 25px;
+
+}
+
+.instructions {
+	position: absolute;
+	visibility: visible;
+	margin-top: 600px;
+	margin-left: 50px;
 }
