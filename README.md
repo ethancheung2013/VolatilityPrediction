@@ -1,5 +1,5 @@
-FoxScraper
-==========
+Volatility Predictor
+====================
 foxnews.py is a python scraper for http://www.foxnews.com/us/economy/index.html.  It runs a sellenium web driver that automates web scraping for more complex web pages.  It was used to automate the click of a 'Show More' button that reloads more economic news
 
 scraper.py is a python scraper for http://finance.yahoo.com/news/provider-marketwatch/.  
@@ -18,3 +18,6 @@ sentimentmodel.py contains all the models that will try to predict a stock volat
     The NMF, Logistic Regression, Random Forest model is run using the command:  python sentimentmodel.py -m nmf
     There are additional functions to display the performance metrics of these models but will need to be uncommented.
     As well, the model is set to run for the last 250 days.  i.e will calculate the last 250 days of delta volatility with an additional inner loop to vary the delta threshold
+
+
+There is a web app available at volio.org which shows the latest news articles categorized using NMF latent topics.  Logistic and random forests were used to classify whether there is a volatility impact.  Linear regression is used to predict the magnitude of the volatility.
