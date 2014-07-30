@@ -1,8 +1,8 @@
+*~
 *.pyc
 password.txt
 SeleniumYahoo.ipynb
 chromedriver_mac32*
-*~
 selenium-project*
 HistoricalVolatility*
 *initial_claims*
@@ -16,3 +16,4 @@ hist_vol.csv
 data2.tsv
 my_csv.csv
 lr_lin_n_clf_bak.pkl
+*.pkl

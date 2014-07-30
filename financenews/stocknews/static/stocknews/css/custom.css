@@ -17,3 +17,44 @@ position: relative;
 /* left: 302px; */
 text-align: center;
 }
+
+
+button {
+float: left;
+border-radius: 0;
+margin-right: 1px;
+margin-bottom: 0.8em;
+display: inline-block;
+padding: 0.5em 1.0em;
+background: #EEE;
+border: none;
+/*border-radius: 7px;*/
+background-image: linear-gradient( to bottom, hsla(0, 0%, 0%, 0), hsla(0, 0%, 0%, 0.2) );
+color: #222;
+font-weight: 500;
+text-shadow: 0 1px white;
+cursor: pointer;
+}
+
+
+.isChecked{
+	background-color: #28F;	
+	color: white;
+	text-shadow: 0 -1px hsla(0, 0%, 0%, 0.8);
+	float: left;
+	border-radius: 0;
+	margin-right: 1px;
+}
+
+.iconimg_plus{
+	max-width: 47px;
+	position: absolute;
+	right: 19px;
+	bottom: 17px;
+}
+
+.iconimg_minus{
+	max-width: 100px;
+	position: absolute;
+	right: 11px;
+}
